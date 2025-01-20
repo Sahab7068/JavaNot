@@ -1,0 +1,546 @@
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.awt.print.*;
+import javax.swing.colorchooser.*;
+import javax.swing.event.MenuDragMouseEvent;
+
+import static java.awt.Color.*;
+
+class JavaNot implements ActionListener {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+
+    }
+}
+
+
+
+
+private static Color currentColor = Color.BLACK;
+
+
+
+
+public static void main(String[] args) {
+
+
+
+
+    JFrame f;
+
+    JTextArea ta;
+    JMenuBar mb;
+    JMenu file, edit, format, viwe, help, fonti ;
+    JMenuItem newi, openi, savei, saveasi, printi, exiti;
+    JMenuItem cuti, copyi, pastei, selectalli, deletei, findi, replacei, gotoi, datetimei;
+    JMenuItem bg, fg , viwehelp ,feedback,aboutn;
+    JMenuItem font, fontstyle, fontsize;
+
+
+
+    f = new JFrame();
+
+
+
+    // Set custom application icon with specific size
+    try {
+        // Load the image file
+        BufferedImage originalIcon = ImageIO.read(new File("D:\\java1.png"));  // Adjust the path if necessary
+
+        // Resize the image to the desired icon size (e.g., 32x32)
+        Image resizedIcon = originalIcon.getScaledInstance(200, 200, Image.SCALE_SMOOTH);
+
+        // Set the resized image as the window icon
+        f.setIconImage(resizedIcon);
+    } catch (IOException e) {
+        System.err.println("Icon file not found!");
+    }
+
+
+
+
+    ta = new JTextArea();
+    mb = new JMenuBar();
+
+    viwehelp = new JMenuItem("View Help ");
+    feedback = new JMenuItem("Feed Back");
+    aboutn = new JMenuItem("About JavaNot");
+//        aboutn new JMenuItem("About NotPad");
+    file = new JMenu("File");
+    edit = new JMenu("Edit");
+    format = new JMenu("Format");
+    help = new JMenu("Help");
+    viwe = new JMenu("Viwe");
+    newi = new JMenuItem("New               Ctrl+N");
+    openi = new JMenuItem("Open             Ctrl+O");
+    savei = new JMenuItem("Save             Ctrl+S");
+    saveasi = new JMenuItem("Save As");
+    printi = new JMenuItem("Print             Ctrl+P");
+    exiti = new JMenuItem("Exit");
+
+
+    cuti = new JMenuItem("Cut                     Ctrl+X");
+    copyi = new JMenuItem("Copy                   Ctrl+C");
+    pastei = new JMenuItem("Paste                 Ctrl+P");
+    selectalli = new JMenuItem("Select All          Ctrl+A");
+    deletei = new JMenuItem("Delete               Ctrl+Del");
+    findi = new JMenuItem("Find ");
+    replacei = new JMenuItem("Repalce             Ctrl+H");
+    gotoi = new JMenuItem("GO To");
+    datetimei = new JMenuItem("Date Time          F5");
+
+    bg = new JMenuItem("BackGround");
+    fg = new JMenuItem("ForGround");
+    font = new JMenuItem("Font");
+    fontstyle = new JMenuItem("Font Style");
+    fontsize = new JMenuItem("Font Size");
+
+
+    file.add(newi);
+    newi.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+            ta.setText(""); // Clears the text area
+        }
+    });
+
+
+    file.add(openi);
+    openi.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+            JFileChooser fileChooser = new JFileChooser();
+            int returnValue = fileChooser.showOpenDialog(null);
+            if (returnValue == JFileChooser.APPROVE_OPTION) {
+                File file = fileChooser.getSelectedFile();
+                try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+                    ta.read(reader, null);
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
+    });
+
+
+    file.add(savei);
+
+    savei.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+            JFileChooser fileChooser = new JFileChooser();
+            int returnValue = fileChooser.showSaveDialog(null);
+            if (returnValue == JFileChooser.APPROVE_OPTION) {
+                File file = fileChooser.getSelectedFile();
+                try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+                    ta.write(writer);
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
+    });
+
+
+    file.add(saveasi);
+    saveasi.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+            JFileChooser fileChooser = new JFileChooser();
+            int returnValue = fileChooser.showSaveDialog(null);
+            if (returnValue == JFileChooser.APPROVE_OPTION) {
+                File file = fileChooser.getSelectedFile();
+                try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+                    ta.write(writer);
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
+    });
+
+
+    file.add(printi);
+
+    pastei.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+            PrinterJob printerJob = PrinterJob.getPrinterJob();
+            if (printerJob.printDialog()) {
+                printerJob.setPrintable(new Printable() {
+                    public int print(Graphics graphics, PageFormat pageFormat, int pageIndex) throws PrinterException {
+                        if (pageIndex > 1) {
+                            return Printable.NO_SUCH_PAGE;
+                        }
+                        graphics.translate((int) pageFormat.getImageableX(), (int) pageFormat.getImageableY());
+                        ta.printAll(graphics);// Print the JTextArea content
+                        printerJob.printDialog();
+                        return Printable.PAGE_EXISTS;
+                    }
+                });
+                try {
+                    printerJob.print();
+                } catch (PrinterException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
+    });
+
+    file.add(exiti);
+
+    exiti.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+            System.exit(0);  // Exits the application
+        }
+    });
+
+
+    edit.add(cuti);
+    edit.add(copyi);
+    edit.add(pastei);
+    edit.add(selectalli);
+    edit.add(deletei);
+    edit.add(datetimei);
+    edit.add(findi);
+    edit.add(replacei);
+    edit.add(gotoi);
+    edit.add(datetimei);
+
+    format.add(bg);
+    format.add(fg);
+    fonti = new JMenu("Font");
+    format.add(fonti);
+    help.add(viwehelp);
+
+
+    JMenuBar menuBar = new JMenuBar();
+    JMenu toolsMenu = new JMenu("                                                                                                                                                                                                                                                                   Tools");
+
+    // Brush Tool with Color Chooser
+    JMenuItem brushToolItem = new JMenuItem("                                                                                                                                                                                                                                                   Brush Tool");
+
+    brushToolItem.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+            // Open the color chooser dialog when the Brush Tool is selected
+            Color newColor = JColorChooser.showDialog(f, "Choose Brush Color", currentColor);
+            if (newColor != null) {
+                currentColor = newColor;  // Update the current brush color
+            }
+        }
+    });
+
+    // Add Brush Tool item to the Tools menu
+    toolsMenu.add(brushToolItem);
+
+    // Add Tools menu to the menu bar
+
+//        toolsMenu.add(BrushToolExample.DrawingPanel);
+    f.setJMenuBar(menuBar);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    fonti.add(font);
+    String[] fontTypes = {"Arial", "Times New Roman", "Courier New", "Verdana"};
+    for (String fontType : fontTypes) {
+        JMenuItem fontMenuItem = new JMenuItem(fontType);
+        fontMenuItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String selectedFont = fontMenuItem.getText();
+                Font currentFont = ta.getFont();
+                ta.setFont(new Font(selectedFont, currentFont.getStyle(), currentFont.getSize()));
+            }
+        });
+
+
+        fonti.add(fontstyle);
+        JMenu fontStyleMenu = new JMenu("Font Style");
+        JMenuItem boldMenuItem = new JMenuItem("Bold");
+        boldMenuItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Font currentFont = ta.getFont();
+                if (currentFont.getStyle() == Font.BOLD) {
+                    ta.setFont(currentFont.deriveFont(Font.PLAIN));
+                } else {
+                    ta.setFont(currentFont.deriveFont(Font.BOLD));
+                }
+            }
+        });
+
+        fontstyle.add(boldMenuItem);
+
+
+        fonti.add(fontsize);
+
+//            cuti.addActionListener(this);
+//            copyi.addActionListener(this);
+//            pastei.addActionListener(this);
+//            selectalli.addActionListener(this);
+
+
+        mb.add(file);
+        mb.add(edit);
+        mb.add(format);
+        mb.add(help);
+
+
+
+
+        viwehelp.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                // Show help in a dialog box
+                JOptionPane.showMessageDialog(f,
+                        "This is a simple text editor.\n\n" +
+                                "Use the menu to open, save, and edit your files.\n" +
+                                "For more information, visit the user manual or contact support.",
+                        "Help - Notepad",
+                        JOptionPane.INFORMATION_MESSAGE);
+            }
+        });
+
+        help.add(feedback);
+        feedback.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    // Opens the default mail client with a "mailto" link
+                    Desktop.getDesktop().mail(new URI("mailto:support@example.com?subject=Feedback"));
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(f, "Error opening email client.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
+
+        help.add(aboutn);
+        aboutn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                // Show an About dialog with details about the app
+                JOptionPane.showMessageDialog(f,
+                        "Notepad v1.0\n\n" +
+                                "A simple text editor written in Java.\n" +
+                                "Developed by SAHAB LAL .",
+                        "About Notepad",
+                        JOptionPane.INFORMATION_MESSAGE);
+            }
+        });
+
+
+
+
+
+
+
+
+
+
+
+        mb.add(viwe);
+
+        mb.add(toolsMenu);
+        mb.getAlignmentX();
+
+
+        mb.setBounds(4, 5, 1400, 30);
+
+        ta.setBounds(4, 40, 996, 996);
+        f.add(ta);
+        f.add(mb);
+        mb.setBackground(Color.CYAN);
+        newi.setBackground(Color.PINK);
+        openi.setBackground(Color.PINK);
+        saveasi.setBackground(Color.PINK);
+        savei.setBackground(Color.PINK);
+        printi.setBackground(Color.PINK);
+        exiti.setBackground(red);
+
+
+
+
+        cuti.setBackground(pink);
+        copyi.setBackground(pink);
+        pastei.setBackground(pink);
+        selectalli.setBackground(pink);
+        deletei.setBackground(pink);
+        findi.setBackground(pink);
+        replacei.setBackground(pink);
+        gotoi.setBackground(pink);
+        datetimei.setBackground(pink);
+        bg.setBackground(pink);
+        fg.setBackground(pink);
+        font.setBackground(pink);
+        boldMenuItem.setBackground(pink);
+        fontstyle.setBackground(pink);
+        fontsize.setBackground(pink);
+        fontsize.setBackground(pink);
+        brushToolItem.setBackground(yellow);
+
+
+
+        viwehelp.setBackground(green);
+        feedback.setBackground(green);
+        aboutn.setBackground(MAGENTA);
+
+
+
+
+
+
+
+
+
+        f.setLayout(null);
+        f.setTitle("JavaNot");
+        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        f.getContentPane().setBackground(Color.white);
+        f.setSize(1000, 1000);
+        f.setVisible(true);
+
+
+        cuti.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ta.cut();
+            }
+        });
+
+        copyi.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ta.copy();
+            }
+        });
+
+        pastei.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ta.paste();
+            }
+        });
+
+        selectalli.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ta.selectAll();
+            }
+        });
+        findi.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String searchText = JOptionPane.showInputDialog(f, "Enter text to find:");
+                String text = ta.getText();
+                int position = text.indexOf(searchText);
+                if (position != -1) {
+                    ta.select(position, position + searchText.length());
+                } else {
+                    JOptionPane.showMessageDialog(f, "Text not found.");
+                }
+            }
+        });
+        replacei.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String findText = JOptionPane.showInputDialog(f, "Enter text to find:");
+                String replaceText = JOptionPane.showInputDialog(f, "Enter text to replace:");
+                String text = ta.getText();
+                text = text.replace(findText, replaceText);
+                ta.setText(text);
+            }
+        });
+        gotoi.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    int lineNumber = Integer.parseInt(JOptionPane.showInputDialog(f, "Enter line number:"));
+                    int position = ta.getLineStartOffset(lineNumber - 1); // 0-based index
+                    ta.setCaretPosition(position);
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(ta, "Invalid line number.");
+                }
+            }
+        });
+        deletei.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+                ta.insert(date, ta.getCaretPosition());
+            }
+        });
+
+
+
+    }
+
+    // Custom JPanel for drawing
+
+
+}
+
+
+
+
+
+
+
+static class DrawingPanel extends JPanel {
+    private int prevX, prevY;  // Previous mouse coordinates for drawing
+
+    public DrawingPanel() {
+        setBackground(Color.WHITE);  // Set the background color to white
+
+        // MouseListener to capture mouse events for drawing
+        addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent e) {
+                // Capture the starting point of the drawing
+                prevX = e.getX();
+                prevY = e.getY();
+            }
+        });
+
+        // MouseMotionListener to capture mouse drag events for drawing
+        addMouseMotionListener(new MouseAdapter() {
+            public void mouseDragged(MouseEvent e) {
+                // Draw lines while the mouse is being dragged
+                Graphics g = getGraphics();
+                g.setColor(currentColor);  // Set the current brush color
+                g.drawLine(prevX, prevY, e.getX(), e.getY());  // Draw a line
+                prevX = e.getX();
+                prevY = e.getY();
+            }
+        });
+    }
+}
+
+
